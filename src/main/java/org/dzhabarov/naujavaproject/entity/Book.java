@@ -1,13 +1,18 @@
 package org.dzhabarov.naujavaproject.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.Set;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Table(name = "book")
 public class Book {
 
     @Id
@@ -28,8 +33,10 @@ public class Book {
     private Set<Author> authors;
 
     @OneToMany(mappedBy = "book")
+    @JsonIgnore
     private List<Loan> loans;
 
     @OneToMany(mappedBy = "book")
+    @JsonIgnore
     private List<Reservation> reservations;
 }
