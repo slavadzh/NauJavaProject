@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <title>Books</title>
+  <meta charset="UTF-8">
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 80%;
+      margin: 20px auto;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Список книг</h1>
+
+<table>
+  <thead>
+  <tr>
+    <th>Название</th>
+    <th>Год</th>
+    <th>Жанр</th>
+    <th>ISBN</th>
+    <th>Авторы</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <tr th:each="book : ${books}">
+    <td th:text="${book.title}"></td>
+    <td th:text="${book.publicationYear}"></td>
+    <td th:text="${book.genre}"></td>
+    <td th:text="${book.isbn}"></td>
+    
+    <td>
+            <span th:each="author, iterStat : ${book.authorsNames}">
+                <span th:text="${author}"></span>
+                <span th:if="${!iterStat.last}">, </span>
+            </span>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>
