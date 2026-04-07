@@ -21,7 +21,11 @@ public class User {
     private String name;
     private String email;
     private String phone;
+    private String password;
     private LocalDate registrationDate;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Loan> loans;
