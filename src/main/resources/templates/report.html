@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Отчет</title>
+</head>
+<body>
+
+<h1>Статистика системы</h1>
+
+<p>Количество пользователей:
+    <span th:text="${report.usersCount}"></span>
+</p>
+
+<p>Время подсчета пользователей:
+    <span th:text="${report.usersTime}"></span> ms
+</p>
+
+<h2>Список книг</h2>
+
+<table border="1">
+    <tr>
+        <th>Название</th>
+        <th>Год</th>
+        <th>Жанр</th>
+    </tr>
+
+    <tr th:each="book : ${report.books}">
+        <td th:text="${book.title}"></td>
+        <td th:text="${book.publicationYear}"></td>
+        <td th:text="${book.genre}"></td>
+    </tr>
+</table>
+
+<p>Время получения книг:
+    <span th:text="${report.booksTime}"></span> ms
+</p>
+
+<p>Общее время:
+    <span th:text="${report.totalTime}"></span> ms
+</p>
+
+</body>
+</html>
