@@ -15,6 +15,8 @@
     Вы успешно вышли из системы
 </div>
 
+<div th:if="${successMessage}" style="color: green;" th:text="${successMessage}"></div>
+
 <form method="post" th:action="@{/login}">
     <div>
         <input type="text" name="name" placeholder="Логин" required>

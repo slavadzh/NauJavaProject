@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
-  <title>Books</title>
+  <title>Книги</title>
   <meta charset="UTF-8">
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
     table {
       border-collapse: collapse;
-      width: 80%;
-      margin: 20px auto;
+      width: 100%;
+      margin: 20px 0;
     }
 
     th, td {
       border: 1px solid black;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
     }
 
@@ -20,14 +25,62 @@
       background-color: #f2f2f2;
     }
 
-    h1 {
-      text-align: center;
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .search-form {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .message-success {
+      color: #0f5132;
+      margin: 10px 0;
+    }
+
+    .message-error {
+      color: #842029;
+      margin: 10px 0;
+    }
+
+    form.inline {
+      display: inline;
+      margin-right: 6px;
+    }
+
+    .reserve-datetime {
+      width: 180px;
+      margin-bottom: 6px;
     }
   </style>
 </head>
 <body>
 
 <h1>Список книг</h1>
+<p>Резерв и выдача по времени <strong th:text="${timeZoneLabel}"></strong>.
+  Сейчас на сервере: <strong th:text="${serverNow}"></strong></p>
+
+<div class="toolbar">
+  <a th:href="@{/library/my}">Мои выдачи и резервы</a>
+  <a th:if="${isAdmin}" th:href="@{/admin}">Панель администратора</a>
+</div>
+
+<div th:if="${successMessage}" class="message-success" th:text="${successMessage}"></div>
+<div th:if="${errorMessage}" class="message-error" th:text="${errorMessage}"></div>
+
+<form class="search-form" method="get" th:action="@{/books}">
+  <input type="text" name="title" placeholder="Название" th:value="${title}">
+  <input type="text" name="author" placeholder="Автор" th:value="${author}">
+  <input type="text" name="genre" placeholder="Жанр" th:value="${genre}">
+  <input type="number" name="year" placeholder="Год" th:value="${year}">
+  <button type="submit">Найти</button>
+</form>
 
 <table>
   <thead>
@@ -36,7 +89,10 @@
     <th>Год</th>
     <th>Жанр</th>
     <th>ISBN</th>
+    <th>Экземпляры</th>
+    <th>Доступно сейчас</th>
     <th>Авторы</th>
+    <th>Действия</th>
   </tr>
   </thead>
 
@@ -46,6 +102,8 @@
     <td th:text="${book.publicationYear}"></td>
     <td th:text="${book.genre}"></td>
     <td th:text="${book.isbn}"></td>
+    <td th:text="${book.totalCopies}"></td>
+    <td th:text="${book.availableCopies}"></td>
     
     <td>
             <span th:each="author, iterStat : ${book.authorsNames}">
@@ -53,11 +111,41 @@
                 <span th:if="${!iterStat.last}">, </span>
             </span>
     </td>
+    <td>
+      <form th:if="${!reservedBookIds.contains(book.id)}" class="inline reserve-form" method="post"
+            th:action="@{/library/books/{id}/reserve(id=${book.id})}">
+        <input type="hidden" name="timezoneOffsetMinutes" class="browser-tz-offset" value="0">
+        <input class="reserve-datetime" type="datetime-local" name="reservationDateTime"
+               th:attr="min=${minReservationDateTime}" required>
+        <button type="submit">Резерв</button>
+      </form>
+
+      <form th:if="${pickupReadyBookIds.contains(book.id)}" class="inline" method="post"
+            th:action="@{/library/books/{id}/take(id=${book.id})}">
+        <button type="submit">Забрать по резерву</button>
+      </form>
+
+      <span th:if="${waitingReservationBookIds.contains(book.id)}">Ожидает времени резерва (обновите страницу)</span>
+
+      <span th:if="${pickupMissedBookIds.contains(book.id)}" style="color: #842029;">
+        Время получения истекло
+      </span>
+
+      <form th:if="${!reservedBookIds.contains(book.id) and book.availableCopies > 0}" class="inline" method="post"
+            th:action="@{/library/books/{id}/take(id=${book.id})}">
+        <button type="submit">Взять</button>
+      </form>
+    </td>
   </tr>
   </tbody>
 </table>
 <form method="post" th:action="@{/logout}">
   <button type="submit">Выйти</button>
 </form>
+<script>
+  document.querySelectorAll('.browser-tz-offset').forEach(function (input) {
+    input.value = new Date().getTimezoneOffset();
+  });
+</script>
 </body>
 </html>

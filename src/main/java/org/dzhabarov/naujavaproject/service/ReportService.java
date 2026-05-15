@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Асинхронное формирование отчёта: пользователи и книги в отдельных потоках
+ */
 @Service
 public class ReportService {
 
@@ -20,6 +23,11 @@ public class ReportService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
 
+    /**
+     * @param reportRepository репозиторий отчётов
+     * @param userRepository репозиторий пользователей
+     * @param bookRepository репозиторий книг
+     */
     public ReportService(ReportRepository reportRepository,
                          UserRepository userRepository,
                          BookRepository bookRepository) {
@@ -28,17 +36,28 @@ public class ReportService {
         this.bookRepository = bookRepository;
     }
 
+    /** Создаёт запись отчёта со статусом CREATED */
     public Long createReport() {
         Report report = new Report();
         report.setStatus(ReportStatus.CREATED.name());
         return reportRepository.save(report).getId();
     }
 
+    /**
+     * Возвращает отчёт по id
+     *
+     * @throws java.util.NoSuchElementException если отчёт не найден
+     */
     public Report getReport(Long id) {
         return reportRepository.findById(id).orElseThrow();
     }
 
-
+    /**
+     * Параллельно собирает данные и формирует DTO отчёта
+     *
+     * @param reportId идентификатор отчёта
+     * @return CompletableFuture с результатом или ошибкой
+     */
     @Async
     public CompletableFuture<ReportDTO> generateReport(Long reportId) {
 

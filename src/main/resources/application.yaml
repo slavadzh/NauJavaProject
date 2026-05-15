@@ -1,9 +1,17 @@
+# Запуск только через Docker: docker compose up -d --build
+# DBeaver с ПК: localhost:15432, БД naumen_java_project_db, postgres/postgres
+app:
+  # Время библиотеки: Екатеринбург (UTC+5)
+  time-zone: ${APP_TIMEZONE:Asia/Yekaterinburg}
+  runtime:
+    hint: "PostgreSQL в Docker (контейнер naujava-postgres, БД naumen_java_project_db)"
+
 spring:
   application:
     name: NauJavaProject
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/nau_java_project_db
+    url: jdbc:postgresql://postgres:5432/naumen_java_project_db
     username: postgres
     password: postgres
   jpa:
@@ -13,3 +21,8 @@ spring:
       hibernate:
         show_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    org.dzhabarov.naujavaproject: INFO
+    org.springframework.web: WARN

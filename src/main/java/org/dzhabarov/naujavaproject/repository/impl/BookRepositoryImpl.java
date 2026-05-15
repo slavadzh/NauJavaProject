@@ -11,15 +11,24 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * Реализация кастомных запросов к каталогу книг
+ */
 @Repository
 public class BookRepositoryImpl implements BookRepositoryCustom {
 
     private final EntityManager em;
 
+    /**
+     * @param em менеджер сущностей JPA
+     */
     public BookRepositoryImpl(EntityManager em) {
         this.em = em;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Book> findByTitleContainingCustom(String title) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -33,6 +42,9 @@ public class BookRepositoryImpl implements BookRepositoryCustom {
         return em.createQuery(cq).getResultList();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Book> findByAuthorNameCustom(String authorName) {
         CriteriaBuilder cb = em.getCriteriaBuilder();

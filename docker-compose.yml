@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: naujava-postgres
+    environment:
+      POSTGRES_DB: naumen_java_project_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d naumen_java_project_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: naujava-app
+    environment:
+      TZ: Asia/Yekaterinburg
+      APP_TIMEZONE: Asia/Yekaterinburg
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
