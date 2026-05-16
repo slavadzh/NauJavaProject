@@ -7,6 +7,9 @@ import org.dzhabarov.naujavaproject.entity.Book;
 
 import java.util.List;
 
+/**
+ * DTO готового отчёта: счётчики, список книг и время выполнения
+ */
 @Getter
 @Setter
 @AllArgsConstructor

@@ -7,15 +7,26 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Загрузка пользователя из БД для Spring Security
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * @param userRepository репозиторий пользователей
+     */
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Находит пользователя по логину и формирует UserDetails с ролью
+     *
+     * @param name логин пользователя
+     */
     @Override
     public UserDetails loadUserByUsername(String name) {
 

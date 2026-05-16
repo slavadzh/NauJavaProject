@@ -9,16 +9,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * Веб-интерфейс асинхронного отчёта по библиотеке
+ */
 @Controller
 @RequestMapping("/reports")
 public class ReportController {
 
     private final ReportService reportService;
 
+    /**
+     * @param reportService сервис формирования отчётов
+     */
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
 
+    /** Создаёт отчёт и запускает его генерацию */
     @GetMapping("/create")
     public String createReport(Model model) {
 
@@ -28,6 +35,7 @@ public class ReportController {
         return "redirect:/reports/" + id;
     }
 
+    /** Отображает статус или готовый отчёт */
     @GetMapping("/{id}")
     public String getReport(@PathVariable Long id, Model model) {
 
